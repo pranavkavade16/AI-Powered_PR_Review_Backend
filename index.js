@@ -1,12 +1,12 @@
 const express = require("express");
-import cors from "cors";
-import dotenv from "dotenv";
-import rateLimit from "express-rate-limit";
-import connectDB from "./db/db.connect.js";
-import prRoutes from "./routes/prRoutes.js";
-import reviewRoutes from "./routes/reviewRoutes.js";
-import historyRoutes from "./routes/historyRoutes.js";
-import errorHandler from "./middleware/errorHandler.js";
+const cors = require("cors");
+const dotenv = require("dotenv");
+const rateLimit = require("express-rate-limit");
+const connectDB = require("./db/db.connect.js");
+const prRoutes = require("./routes/prRoutes.js");
+const reviewRoutes = require("./routes/reviewRoutes.js");
+const historyRoutes = require("./routes/historyRoutes.js");
+const errorHandler = require("./middleware/errorHandler.js");
 
 dotenv.config();
 

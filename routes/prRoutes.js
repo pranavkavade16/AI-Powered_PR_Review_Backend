@@ -1,5 +1,5 @@
-import express from "express";
-import { fetchPR } from "../controllers/prController.js";
+const express = require("express");
+const { fetchPR } = require("../controllers/prController.js");
 
 const router = express.Router();
 

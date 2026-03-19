@@ -1,5 +1,5 @@
-import express from "express";
-import { reviewCode } from "../controllers/reviewController.js";
+const express = require("express");
+const { reviewCode } = require("../controllers/reviewController.js");
 
 const router = express.Router();
 

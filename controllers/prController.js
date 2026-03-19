@@ -1,5 +1,5 @@
-import axios from "axios";
-import { asyncHandler } from "../middleware/errorHandler.js";
+const axios = require("axios");
+const { asyncHandler } = require("../middleware/errorHandler.js");
 
 // ── Helper: parse GitHub PR URL into parts ──
 const parsePRUrl = (url) => {
@@ -43,11 +43,9 @@ export const fetchPR = asyncHandler(async (req, res) => {
   );
 
   if (!data || data.length === 0) {
-    return res
-      .status(404)
-      .json({
-        error: "No files found in this PR. Make sure the PR has code changes.",
-      });
+    return res.status(404).json({
+      error: "No files found in this PR. Make sure the PR has code changes.",
+    });
   }
 
   // Extract only what we need — filename, status, patch

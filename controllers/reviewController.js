@@ -1,5 +1,5 @@
-import Groq from "groq-sdk";
-import { asyncHandler } from "../middleware/errorHandler.js";
+const Groq = require("groq-sdk");
+const { asyncHandler } = require("../middleware/errorHandler.js");
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -115,11 +115,9 @@ export const reviewCode = asyncHandler(async (req, res) => {
   );
 
   if (reviewableFiles.length === 0) {
-    return res
-      .status(400)
-      .json({
-        error: "No reviewable files found. PR may contain only binary files.",
-      });
+    return res.status(400).json({
+      error: "No reviewable files found. PR may contain only binary files.",
+    });
   }
 
   // Truncate very large diffs to stay within token limits

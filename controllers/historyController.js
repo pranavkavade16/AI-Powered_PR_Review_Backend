@@ -1,9 +1,9 @@
-import Review from "../models/review.model.js";
-import { asyncHandler } from "../middleware/errorHandler.js";
+const Review = require("../models/review.model.js");
+const { asyncHandler } = require("../middleware/errorHandler.js");
 
 // ── GET /api/history ──
 // Returns all saved reviews, newest first
-export const getHistory = asyncHandler(async (req, res) => {
+const getHistory = asyncHandler(async (req, res) => {
   const reviews = await Review.find().sort({ createdAt: -1 }).select("-__v");
 
   res.json({ reviews });
@@ -12,7 +12,7 @@ export const getHistory = asyncHandler(async (req, res) => {
 // ── POST /api/history ──
 // Body: { prUrl, owner, repo, prNumber, review, filesChanged, additions, deletions }
 // Saves a review to MongoDB
-export const saveReview = asyncHandler(async (req, res) => {
+const saveReview = asyncHandler(async (req, res) => {
   const {
     prUrl,
     owner,
@@ -58,7 +58,7 @@ export const saveReview = asyncHandler(async (req, res) => {
 
 // ── DELETE /api/history/:id ──
 // Deletes a single review by MongoDB _id
-export const deleteReview = asyncHandler(async (req, res) => {
+const deleteReview = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const review = await Review.findByIdAndDelete(id);
@@ -72,7 +72,7 @@ export const deleteReview = asyncHandler(async (req, res) => {
 
 // ── GET /api/history/:id ──
 // Get a single review by id
-export const getReviewById = asyncHandler(async (req, res) => {
+const getReviewById = asyncHandler(async (req, res) => {
   const review = await Review.findById(req.params.id).select("-__v");
 
   if (!review) {
@@ -81,3 +81,5 @@ export const getReviewById = asyncHandler(async (req, res) => {
 
   res.json({ review });
 });
+
+module.exports = { getHistory, saveReview, deleteReview, getReviewById };

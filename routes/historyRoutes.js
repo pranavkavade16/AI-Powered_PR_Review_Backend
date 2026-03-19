@@ -1,10 +1,10 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   getHistory,
   saveReview,
   deleteReview,
   getReviewById,
-} from "../controllers/historyController.js";
+} = require("../controllers/historyController.js");
 
 const router = express.Router();
 
@@ -16,4 +16,4 @@ router.route("/history").get(getHistory).post(saveReview);
 // DELETE /api/history/:id  → delete a review
 router.route("/history/:id").get(getReviewById).delete(deleteReview);
 
-export default router;
+module.exports = router;
