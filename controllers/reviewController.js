@@ -1,7 +1,5 @@
 const Groq = require("groq-sdk");
-const { asyncHandler } = require("../middleware/errorHandler.js");
-
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const { asyncHandler } = require("../middleware/errorHandler");
 
 // ── Build the prompt from files array ──
 const buildPrompt = (files) => {
@@ -39,7 +37,7 @@ Severity levels:
 Score guide: 1-3 (major issues), 4-6 (some issues), 7-8 (good with minor issues), 9-10 (excellent)`;
 };
 
-// ── Parse LLM response safely ──
+// ── Parse LLM response safely — 3 fallback strategies ──
 const parseReviewJSON = (text) => {
   // Strategy 1: direct parse
   try {
@@ -48,7 +46,7 @@ const parseReviewJSON = (text) => {
     /* continue */
   }
 
-  // Strategy 2: extract JSON from markdown code block
+  // Strategy 2: extract from markdown code block
   const codeBlockMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (codeBlockMatch) {
     try {
@@ -71,7 +69,7 @@ const parseReviewJSON = (text) => {
   return null;
 };
 
-// ── Validate and sanitize the parsed review ──
+// ── Sanitize the parsed review ──
 const sanitizeReview = (raw) => {
   return {
     summary:
@@ -99,17 +97,17 @@ const sanitizeReview = (raw) => {
 };
 
 // ── POST /api/review ──
-// Body: { files: [...], prUrl: "..." }
-// Returns: { review: { summary, score, issues, positives, suggestions } }
+const reviewCode = asyncHandler(async (req, res) => {
+  // ✓ Initialize Groq inside the function so dotenv has already loaded
+  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-export const reviewCode = asyncHandler(async (req, res) => {
-  const { files, prUrl } = req.body;
+  const { files } = req.body;
 
   if (!files || !Array.isArray(files) || files.length === 0) {
     return res.status(400).json({ error: "files array is required" });
   }
 
-  // Filter out files with no patch (binary files etc.)
+  // Filter out binary files with no patch
   const reviewableFiles = files.filter(
     (f) => f.patch && f.patch !== "Binary file or no diff available",
   );
@@ -120,7 +118,7 @@ export const reviewCode = asyncHandler(async (req, res) => {
     });
   }
 
-  // Truncate very large diffs to stay within token limits
+  // Truncate large diffs to stay within token limits
   const truncatedFiles = reviewableFiles.map((f) => ({
     ...f,
     patch:
@@ -129,7 +127,7 @@ export const reviewCode = asyncHandler(async (req, res) => {
         : f.patch,
   }));
 
-  // Call Groq API
+  // Call Groq
   const completion = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
     temperature: 0.3,
@@ -148,8 +146,6 @@ export const reviewCode = asyncHandler(async (req, res) => {
   });
 
   const rawText = completion.choices[0]?.message?.content || "";
-
-  // Parse the response
   const parsed = parseReviewJSON(rawText);
 
   if (!parsed) {
@@ -159,7 +155,7 @@ export const reviewCode = asyncHandler(async (req, res) => {
       .json({ error: "AI returned an invalid response. Please try again." });
   }
 
-  const review = sanitizeReview(parsed);
-
-  res.json({ review });
+  res.json({ review: sanitizeReview(parsed) });
 });
+
+module.exports = { reviewCode };

@@ -6,7 +6,7 @@ const connectDB = require("./db/db.connect.js");
 const prRoutes = require("./routes/prRoutes.js");
 const reviewRoutes = require("./routes/reviewRoutes.js");
 const historyRoutes = require("./routes/historyRoutes.js");
-const errorHandler = require("./middleware/errorHandler.js");
+const { errorHandler } = require("./middleware/errorHandler.js");
 
 dotenv.config();
 

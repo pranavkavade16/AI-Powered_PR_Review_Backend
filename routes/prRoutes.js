@@ -7,4 +7,4 @@ const router = express.Router();
 // Fetches the code diff from GitHub API for a given PR URL
 router.post("/fetch-pr", fetchPR);
 
-export default router;
+module.exports = router;

@@ -12,7 +12,7 @@ const parsePRUrl = (url) => {
 // Body: { prUrl: "https://github.com/owner/repo/pull/123" }
 // Returns: { files: [...], meta: { owner, repo, prNumber, filesChanged, additions, deletions } }
 
-export const fetchPR = asyncHandler(async (req, res) => {
+const fetchPR = asyncHandler(async (req, res) => {
   const { prUrl } = req.body;
 
   // Validate input
@@ -73,3 +73,5 @@ export const fetchPR = asyncHandler(async (req, res) => {
     },
   });
 });
+
+module.exports = { fetchPR };

@@ -7,4 +7,4 @@ const router = express.Router();
 // Sends the PR diff to Groq LLM and returns structured AI review
 router.post("/review", reviewCode);
 
-export default router;
+module.exports = router;
