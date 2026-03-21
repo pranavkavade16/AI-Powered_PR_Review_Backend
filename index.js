@@ -17,7 +17,13 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 // ── Middleware ──
-app.use(cors({ origin: "http://localhost:5173" }));
+const corsOptions = {
+  origin: "*",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "1mb" }));
 
 // ── Rate limiter — max 30 requests per minute ──
